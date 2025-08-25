@@ -20,10 +20,14 @@ internal fun Project.configureBuildTypes(
         buildFeatures {
             buildConfig = true
         }
+
         defaultConfig {
-            buildConfigField("String", "API_KEY", localProperties.getProperty("api_key"))
-            buildConfigField("String", "BASE_URL", localProperties.getProperty("base_url"))
-            buildConfigField("String", "BASE_IMAGE_URL", localProperties.getProperty("base_image_url"))
+            fun prop(name: String): String =
+                checkNotNull(localProperties.getProperty(name)) { "Missing $name in local.properties" }
+
+            buildConfigField("String", "API_KEY", "\"${prop("api_key")}\"")
+            buildConfigField("String", "BASE_URL", "\"${prop("base_url")}\"")
+            buildConfigField("String", "BASE_IMAGE_URL", "\"${prop("base_image_url")}\"")
         }
 
         when (extensionType) {
@@ -38,7 +42,7 @@ internal fun Project.configureBuildTypes(
                             )
                         }
                         release {
-                            isMinifyEnabled = true
+                            isMinifyEnabled = false
                             proguardFiles(
                                 getDefaultProguardFile("proguard-android-optimize.txt"),
                                 "proguard-rules.pro"
@@ -59,7 +63,7 @@ internal fun Project.configureBuildTypes(
                             )
                         }
                         release {
-                            isMinifyEnabled = true
+                            isMinifyEnabled = false
                             proguardFiles(
                                 getDefaultProguardFile("proguard-android-optimize.txt"),
                                 "proguard-rules.pro"
